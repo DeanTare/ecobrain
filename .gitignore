@@ -10,3 +10,4 @@ models/sound_classifier.data-00000-of-00001
 models/sound_classifier.index
 models/sound_classifier.meta
 .DS_Store
+__pycache__/retrain.cpython-36.pyc
