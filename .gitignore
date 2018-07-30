@@ -9,3 +9,4 @@ models/inception_retrain_logs/train/events.out.tfevents.1512108309.TEEBS-ALIENWA
 models/sound_classifier.data-00000-of-00001
 models/sound_classifier.index
 models/sound_classifier.meta
+.DS_Store
