@@ -938,7 +938,7 @@ if __name__ == '__main__':
   parser.add_argument(
       '--image_dir',
       type=str,
-      default='dataset/jpeg',
+      default='dataset/jpg',
       help='Path to folders of labeled images.'
   )
   parser.add_argument(
