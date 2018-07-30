@@ -12,8 +12,10 @@ from sklearn.model_selection import train_test_split
 
 threshold = 0.99
 
+parse = sys.argv[1]
+
 host = ""
-port = 8888
+port = 8889
 path = "C:/Users/tyson/Desktop/EcoRobotics/Product/cloud/"
 
 conn_list = []
@@ -21,7 +23,7 @@ conn_model = {}
 model_conn = {}
 
 print(" ")
-parse = input("Parse (yes/no): ")
+#parse = input("Parse (yes/no): ")
 
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 s.bind(('localhost', 8888))

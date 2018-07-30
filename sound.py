@@ -10,8 +10,10 @@ from time import gmtime, strftime
 
 from sklearn.model_selection import train_test_split
 
+parse = sys.argv[1]
+
 print(" ")
-parse = input("Parse (yes/no): ")
+#parse = input("Parse (yes/no): ")
 
 def extract_feature(file_name):
     X, sample_rate = librosa.load(file_name)
