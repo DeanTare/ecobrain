@@ -27,15 +27,15 @@ print(" ")
 
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 s.bind(('localhost', 8888))
-s.listen(3)
+s.listen(4)
 connected_models = 0
 print(" ")
 print("Waiting for all classifiers to connect.")
-while connected_models < 3:
+while connected_models < 4:
 	conn, _ = s.accept()
 	conn_list.append(conn)
 	data = conn.recv(1024).decode()
-	if data == "image" or data == "sound" or data == "series":
+	if data == "image" or data == "sound" or data == "series" or data == "second":
 		connected_models += 1
 		reply = parse
 		conn_model[conn] = data
@@ -44,8 +44,10 @@ while connected_models < 3:
 			print("Image Classifier has joined.")
 		elif data == "sound":
 			print("Sound Classifier has joined.")
+		elif data == "second":
+			print("Second Classifier has joined.")
 		else:
-			print("Series Classifier has joined.")
+			print("Series has joined.")
 	else:
 		reply = "declined"
 	conn.send(reply.encode())
@@ -276,24 +278,38 @@ def dataTransfer(conn):
 					filename = "predict/sound.wav"
 				if form == "csv":
 					filename = "predict/series.csv"
-				with open(filename, "wb") as f:
-					f.write(base64.b64decode(data))
+				if form != "second":
+					with open(filename, "wb") as f:
+						f.write(base64.b64decode(data))
 				print("Received '" + filename + "'")
 			print("Predicting...")
 			model_conn["image"].send("predict/image.jpg".encode())
+			# print("After Image")
 			model_conn["sound"].send("predict/sound.wav".encode())
+			# print("After Sound")
 			model_conn["series"].send("predict/series.csv".encode())
+			# print("After Series")
+			model_conn["second"].send("second".encode())
+			# print("After Second")
 			model_reply = {}
 			completed_models = 0
-			while completed_models < 3:
+			while completed_models < 4:
 				completed, _, _ = select.select(conn_list, [], [])
+				# print("After Completed")
 				for c in completed:
+					print("In for c in completed:", str(completed_models))
 					completed_models += 1
 					data = c.recv(1024).decode()
 					model_reply[conn_model[c]] = data
 			image_features, image_time = model_reply['image'].split(" - ")
 			sound_features, sound_time = model_reply['sound'].split(" - ")
 			series_features, series_time = model_reply['series'].split(" - ")
+			time.sleep(0.05)
+			model_conn["second"].send(series_features.encode()) # Sending series probabilities to "second" classifier
+			time.sleep(0.05)
+			model_conn["second"].send(sound_features.encode()) # Sending sound probabilities to "second" classifier
+			time.sleep(0.05)
+			model_conn["second"].send(image_features.encode()) # Sending image probabilities to "second" classifier
 			image_features = image_features.split(" ")
 			sound_features = sound_features.split(" ")
 			series_features = series_features.split(" ")

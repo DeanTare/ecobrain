@@ -5,71 +5,91 @@ import numpy as np
 import time
 import csv
 from knndtw import KnnDtw
+import sys
 
-freqs = []
-masses = []
-labels = []
-# Read plastic csv data
-for csv_name in glob.glob("dataset/csv/plastic/*.csv"):
-    with open(csv_name, "r") as f:
-        reader = csv.DictReader(f)
-        freq_list = []
-        mass_list = []
-        for row in reader:
-            freq = float(row['Freq'])
-            freq_list.append(freq)
-            mass = float(row['Mass'])
-            mass_list.append(mass)
-        freqs.append(freq_list)
-        masses.append(mass_list)
-        labels.append(0)
-# Read metal csv data
-for csv_name in glob.glob("dataset/csv/metal/*.csv"):
-    with open(csv_name, "r") as f:
-        reader = csv.DictReader(f)
-        freq_list = []
-        mass_list = []
-        for row in reader:
-            freq = float(row['Freq'])
-            freq_list.append(freq)
-            mass = float(row['Mass'])
-            mass_list.append(mass)
-        freqs.append(freq_list)
-        masses.append(mass_list)
-        labels.append(1)
-# Read glass csv data
-for csv_name in glob.glob("dataset/csv/glass/*.csv"):
-    with open(csv_name, "r") as f:
-        reader = csv.DictReader(f)
-        freq_list = []
-        mass_list = []
-        for row in reader:
-            freq = float(row['Freq'])
-            freq_list.append(freq)
-            mass = float(row['Mass'])
-            mass_list.append(mass)
-        freqs.append(freq_list)
-        masses.append(mass_list)
-        labels.append(2)
-# Read paper csv data
-'''
-for csv_name in glob.glob("dataset/csv/paper/*.csv"):
-    with open(csv_name, "r") as f:
-        reader = csv.DictReader(f)
-        freq_list = []
-        mass_list = []
-        for row in reader:
-            freq = float(row['Freq'])
-            freq_list.append(freq)
-            mass = float(row['Mass'])
-            mass_list.append(mass)
-        freqs.append(freq_list)
-        masses.append(mass_list)
-        labels.append(3)
-'''
-freqs = np.array(freqs)
-masses = np.array(masses)
-labels = np.array(labels)
+parse = sys.argv[1]
+
+def parse_dataset():
+	print(" ")
+	print("============================")
+	print(" FEATURE EXTRACTING DATASET ")
+	print("============================")
+	print(" ")
+	freqs = []
+	masses = []
+	labels = []
+	# Read plastic csv data
+	for csv_name in glob.glob("dataset/csv/plastic/*.csv"):
+	    with open(csv_name, "r") as f:
+	        reader = csv.DictReader(f)
+	        freq_list = []
+	        mass_list = []
+	        for row in reader:
+	            freq = float(row['Freq'])
+	            freq_list.append(freq)
+	            mass = float(row['Mass'])
+	            mass_list.append(mass)
+	        freqs.append(freq_list)
+	        masses.append(mass_list)
+	        labels.append(0)
+	# Read metal csv data
+	for csv_name in glob.glob("dataset/csv/metal/*.csv"):
+	    with open(csv_name, "r") as f:
+	        reader = csv.DictReader(f)
+	        freq_list = []
+	        mass_list = []
+	        for row in reader:
+	            freq = float(row['Freq'])
+	            freq_list.append(freq)
+	            mass = float(row['Mass'])
+	            mass_list.append(mass)
+	        freqs.append(freq_list)
+	        masses.append(mass_list)
+	        labels.append(1)
+	# Read glass csv data
+	for csv_name in glob.glob("dataset/csv/glass/*.csv"):
+	    with open(csv_name, "r") as f:
+	        reader = csv.DictReader(f)
+	        freq_list = []
+	        mass_list = []
+	        for row in reader:
+	            freq = float(row['Freq'])
+	            freq_list.append(freq)
+	            mass = float(row['Mass'])
+	            mass_list.append(mass)
+	        freqs.append(freq_list)
+	        masses.append(mass_list)
+	        labels.append(2)
+	# Read paper csv data
+	'''
+	for csv_name in glob.glob("dataset/csv/paper/*.csv"):
+	    with open(csv_name, "r") as f:
+	        reader = csv.DictReader(f)
+	        freq_list = []
+	        mass_list = []
+	        for row in reader:
+	            freq = float(row['Freq'])
+	            freq_list.append(freq)
+	            mass = float(row['Mass'])
+	            mass_list.append(mass)
+	        freqs.append(freq_list)
+	        masses.append(mass_list)
+	        labels.append(3)
+	'''
+	freqs = np.array(freqs)
+	masses = np.array(masses)
+	labels = np.array(labels)
+
+	np.save('processed/series_freqs.npy', freqs)
+	np.save('processed/series_masses.npy', masses)
+	np.save('processed/series_labels.npy', labels)
+
+if parse == "yes":
+    parse_dataset()
+
+freqs = np.load('processed/series_freqs.npy')
+masses = np.load('processed/series_masses.npy')
+labels = np.load('processed/series_labels.npy')
 
 print(" ")
 print("=============================")
@@ -89,6 +109,8 @@ mass_model.fit(masses, labels)
 # Setup client socket
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 s.connect(('localhost', 8888))
+# s2 = socket.socket(socket.AF_INET, socket.SOCK_STREAM) # Second connection
+# s2.connect(('localhost', 8890))
 
 s.send("series".encode())
 parse = s.recv(1024).decode()

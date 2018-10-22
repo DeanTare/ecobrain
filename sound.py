@@ -5,6 +5,7 @@ import librosa
 import time
 import csv
 import glob
+import sys
 
 from time import gmtime, strftime
 
@@ -207,6 +208,10 @@ def train_neural_network(x):
         print('Model Saved: models/sound_classifier')
 
 train_neural_network(x)
+
+# with tf.Session() as sess:
+#     new_saver = tf.train.import_meta_graph('models/sound_classifier.meta')
+#     new_saver.restore(sess,tf.train.latest_checkpoint('checkpoint'))
 
 # Setup client socket
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
